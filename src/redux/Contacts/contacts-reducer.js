@@ -1,21 +1,22 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
-import { addContact, deleteContact, filterContacts } from "./contacts-acions";
-import contactsList from '../../components/initialContacts.json'
+import { filterContacts } from "./contacts-acions";
+import { fetchContacts, addContact, deleteContact } from "./contacts-operations";
 
-const initialContacts = [...contactsList];
 const initialFilter = "";
 
-const contactsReducer = createReducer(initialContacts, {
-    [addContact]: (state, { payload }) => [...state, payload],
-    [deleteContact]: (state, { payload }) => state.filter(({ id }) => id !== payload),
+const items = createReducer([], {
+    [fetchContacts.fulfilled]: (_, { payload }) => payload,
+    [addContact.fulfilled]: (state, { payload }) => [...state, payload],
+    [deleteContact.fulfilled]: (state, { payload }) => state.filter(contact => contact.id !== payload),
 })
 
-const filterReducer = createReducer(initialFilter, {
+
+const filter = createReducer(initialFilter, {
     [filterContacts]: (_, { payload }) => payload,
 });
 
 export default combineReducers({
-    items: contactsReducer,
-    filter: filterReducer,
+    items,
+    filter,
 })
